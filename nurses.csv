@@ -1,4 +1,3 @@
 user_id,license_number,specialization,rating,is_verified
 1,RN-001,พยาบาลวิชาชีพ RN,5,True
-2,PT-001,นักกายภาพ PT,0,True
-6,12345678,นักกายภาพ PT,0,False
+
