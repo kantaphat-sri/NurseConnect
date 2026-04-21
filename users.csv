@@ -1,0 +1,8 @@
+id,name,email,password,phone,role
+1,สมรักษ์ พยาบาลดี,nurse1@test.com,1234,0811111111,nurse
+2,จิตรา นักกายภาพ,nurse2@test.com,1234,0822222222,nurse
+3,นายสมบัติ ใจดี,client1@test.com,1234,0833333333,client
+4,นางมณี รักษาสุข,client2@test.com,1234,0844444444,client
+5,กันตพัท,Kantaphat@gmail.com,Akang,0999999999,client
+6,a,a@gamil.com,AAAA,0999999999,nurse
+7,Test Client,testclient@example.com,1234,0123456789,client

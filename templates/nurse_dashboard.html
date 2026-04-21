@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="display: flex; justify-content: space-between; align-items: start; margin-bottom:30px;">
+    <div>
+        <h2 style="margin:0">ยินดีต้อนรับ พยาบาล {{ session.name }}</h2>
+        <div style="margin-top:10px;">
+            <span style="background: var(--primary); color:white; padding: 4px 12px; border-radius: 20px; font-size:12px; font-weight:700;">{{ nurse_info.specialization }}</span>
+            <span style="margin-left:10px; color: gold;">{{ '★' * (nurse_info.rating|int) }}</span>
+        </div>
+    </div>
+    <div class="card" style="padding: 15px 25px; margin:0; border-left: 5px solid {{ 'var(--success)' if nurse_info.is_verified == 'True' else 'var(--danger)' }}">
+        <p style="margin:0; font-size:12px; font-weight:700">สถานะการยืนยัน</p>
+        <p style="margin:0; font-weight:700; color: {{ 'var(--success)' if nurse_info.is_verified == 'True' else 'var(--danger)' }}">
+            {{ 'ยืนยันตัวตนแล้ว' if nurse_info.is_verified == 'True' else 'รอยืนยันตัวตน' }}
+        </p>
+    </div>
+</div>
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:30px;">
+    <div>
+        <h3 style="margin-top:0">งานที่รอกดรับ</h3>
+        {% for b in pending_bookings %}
+        <div class="card">
+            <div style="display:flex; justify-content: space-between; margin-bottom:15px;">
+                <span class="badge bg-pending">งานใหม่</span>
+                <span style="font-weight:700">{{ b.date }} {{ b.time }} น.</span>
+            </div>
+            <h4 style="margin:0">{{ b.service_type }}</h4>
+            <p style="font-size:14px; margin-bottom:5px;"><strong>ลูกค้า:</strong> {{ b.client_name }}</p>
+            <p style="font-size:14px; color:#64748B;"><strong>ที่อยู่:</strong> {{ b.address }}</p>
+            <p style="font-size:14px; color:var(--primary); font-weight:700;"><strong>รายได้ที่จะได้รับ:</strong> ฿{{ b.total_price|toLocaleString }} ({{ b.duration }} ชม.)</p>
+            <form action="/nurse/accept/{{ b.id }}" method="POST">
+                <button type="submit" class="btn btn-primary" style="width:100%">รับงานนี้</button>
+            </form>
+        </div>
+        {% else %}
+        <p style="color:#64748B; font-style:italic">ไม่มีงานรอกดรับในขณะนี้</p>
+        {% endfor %}
+    </div>
+
+    <div>
+        <h3 style="margin-top:0">งานปัจจุบันของฉัน</h3>
+        {% for b in my_bookings %}
+        <div class="card">
+            <div style="display:flex; justify-content: space-between; margin-bottom:15px;">
+                <span class="badge bg-{{ b.status }}">
+                    {% if b.status == 'confirmed' %}ยืนยันแล้ว{% elif b.status == 'completed' %}เสร็จสิ้น{% else %}รอดำเนินการ{% endif %}
+                </span>
+                <span style="font-weight:700">{{ b.date }} {{ b.time }} น.</span>
+            </div>
+            <h4 style="margin:0">{{ b.service_type }}</h4>
+            <p style="font-size:14px; margin-bottom:5px;"><strong>ลูกค้า:</strong> {{ b.client_name }} ({{ b.phone }})</p>
+            <p style="font-size:14px; color:var(--primary); font-weight:700;"><strong>รายได้:</strong> ฿{{ b.total_price|toLocaleString }} ({{ b.duration }} ชม.)</p>
+            {% if b.status == 'confirmed' %}
+            <form action="/nurse/complete/{{ b.id }}" method="POST">
+                <button type="submit" class="btn btn-outline" style="width:100%">ทำเครื่องหมายว่าเสร็จสิ้น</button>
+            </form>
+            {% endif %}
+        </div>
+        {% else %}
+        <p style="color:#64748B; font-style:italic">ยังไม่มีงานที่คุณดูแลอยู่</p>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %}

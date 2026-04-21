@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="margin-bottom:30px">Dashboard ผู้ดูแลระบบ</h2>
+
+<div class="grid-flex" style="display:grid; grid-template-columns: repeat(4, 1fr); gap:20px; margin-bottom:40px;">
+    <div class="card" style="text-align:center">
+        <p style="margin:0; font-size:12px; font-weight:700; color:#64748B">พยาบาลทั้งหมด</p>
+        <p style="font-size:32px; font-weight:700; margin:5px 0">{{ total_nurses }}</p>
+    </div>
+    <div class="card" style="text-align:center">
+        <p style="margin:0; font-size:12px; font-weight:700; color:#64748B">ลูกค้าทั้งหมด</p>
+        <p style="font-size:32px; font-weight:700; margin:5px 0">{{ total_clients }}</p>
+    </div>
+    <div class="card" style="text-align:center">
+        <p style="margin:0; font-size:12px; font-weight:700; color:#64748B">การจองทั้งหมด</p>
+        <p style="font-size:32px; font-weight:700; margin:5px 0">{{ total_bookings }}</p>
+    </div>
+    <div class="card" style="text-align:center; background: var(--primary); color:white">
+        <p style="margin:0; font-size:12px; font-weight:700; opacity:0.8">รายได้ที่เกิดขึ้น</p>
+        <p style="font-size:32px; font-weight:700; margin:5px 0">฿{{ (revenue)|toLocaleString }}</p>
+    </div>
+</div>
+
+<div class="card">
+    <h3 style="margin-top:0">รายชื่อพยาบาล</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>ชื่อ</th>
+                <th>ใบอนุญาต</th>
+                <th>ความเชี่ยวชาญ</th>
+                <th>สถานะ</th>
+                <th>การจัดการ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for n in nurses %}
+            <tr>
+                <td>{{ n.name }}</td>
+                <td>{{ n.license_number }}</td>
+                <td>{{ n.specialization }}</td>
+                <td>
+                    {% if n.is_verified == 'True' %}
+                        <span class="badge bg-confirmed">ยืนยันแล้ว</span>
+                    {% else %}
+                        <span class="badge bg-pending">รอตรวจสอบ</span>
+                    {% endif %}
+                </td>
+                <td>
+                    <div style="display:flex; gap:5px">
+                        {% if n.is_verified == 'False' %}
+                        <form action="/admin/verify/{{ n.user_id }}" method="POST">
+                            <button class="btn btn-primary" style="padding:5px 10px; font-size:12px;">ยืนยัน</button>
+                        </form>
+                        {% endif %}
+                        <form action="/admin/delete_nurse/{{ n.user_id }}" method="POST">
+                            <button class="btn btn-danger" style="padding:5px 10px; font-size:12px;">ลบ</button>
+                        </form>
+                    </div>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<div class="card" style="margin-top:40px">
+    <h3 style="margin-top:0">การจองทั้งหมดในระบบ</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>#</th>
+                <th>ลูกค้า</th>
+                <th>พยาบาล</th>
+                <th>บริการ</th>
+                <th>ระยะเวลา</th>
+                <th>ราคา</th>
+                <th>วันที่ / เวลา</th>
+                <th>สถานะ</th>
+                <th>การจัดการ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for b in bookings %}
+            <tr>
+                <td>{{ b.id }}</td>
+                <td>{{ b.client_name }}</td>
+                <td>{{ b.nurse_name or 'ยังไม่มี' }}</td>
+                <td>{{ b.service_type }}</td>
+                <td>{{ b.duration or '-' }} ชม.</td>
+                <td>฿{{ b.total_price|toLocaleString if b.total_price else '0' }}</td>
+                <td>{{ b.date }}<br><span style="font-size:12px; color:#64748B;">{{ b.time }} น.</span></td>
+                <td>
+                    <span class="badge bg-{{ b.status }}">
+                        {% if b.status == 'confirmed' %}ยืนยันแล้ว{% elif b.status == 'completed' %}เสร็จสิ้น{% else %}รอดำเนินการ{% endif %}
+                    </span>
+                </td>
+                <td>
+                    <form action="/admin/delete_booking/{{ b.id }}" method="POST">
+                        <button class="btn btn-danger" style="padding:5px 10px; font-size:12px;">ลบ</button>
+                    </form>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

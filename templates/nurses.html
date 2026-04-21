@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+{% block content %}
+<div style="margin-bottom: 40px; text-align: center;">
+    <h1 style="font-size: 36px; font-weight: 700; margin-bottom: 10px;">รายชื่อพยาบาลและผู้ดูแล</h1>
+    <p style="color: #64748B;">พยาบาลวิชาชีพและผู้เชี่ยวชาญที่ผ่านการตรวจสอบประวัติเรียบร้อยแล้ว</p>
+</div>
+
+<div class="grid-5" style="grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));">
+    {% for nurse in nurses %}
+    <div class="card" style="text-align: center; display: flex; flex-direction: column; align-items: center; gap: 15px;">
+        <div style="width: 80px; height: 80px; background: #F1F5F9; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 40px;">
+            👩‍⚕️
+        </div>
+        <div style="flex-grow: 1;">
+            <h3 style="margin: 0; font-size: 20px;">{{ nurse.name }}</h3>
+            {% if nurse.is_verified == 'True' %}
+                <span class="badge bg-confirmed" style="font-size: 10px; padding: 2px 6px;">พยาบาลที่ผ่านการยืนยัน</span>
+            {% else %}
+                <span class="badge bg-pending" style="font-size: 10px; padding: 2px 6px;">กำลังรอยืนยันตัวตน</span>
+            {% endif %}
+            <p style="color: var(--primary); font-weight: 700; margin: 5px 0; font-size: 14px;">{{ nurse.specialization }}</p>
+            <div style="color: gold; margin-bottom: 10px;">{{ '★' * (nurse.rating|int) }}</div>
+            <p style="font-size: 12px; color: #64748B;">เลขใบอนญาต: {{ nurse.license_number }}</p>
+        </div>
+        <a href="/login" class="btn btn-primary" style="width: 100%;">จองบริการ</a>
+    </div>
+    {% else %}
+    <div style="grid-column: 1 / -1; text-align: center; padding: 40px;">
+        <p style="color: #64748B; font-style: italic;">ไม่พบพยาบาลในระบบขณะนี้</p>
+    </div>
+    {% endfor %}
+</div>
+
+<div style="margin-top: 40px; text-align: center;">
+    <a href="/" class="btn btn-outline">กลับหน้าหลัก</a>
+</div>
+{% endblock %}

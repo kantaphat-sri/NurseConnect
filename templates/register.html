@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width: 600px; margin: 40px auto;">
+    <h2 style="margin-top:0">ลงทะเบียนสมาชิก</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label>ชื่อ-นามสกุล</label>
+            <input type="text" name="name" required>
+        </div>
+        <div class="form-group">
+            <label>อีเมล</label>
+            <input type="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label>รหัสผ่าน</label>
+            <input type="password" name="password" required>
+        </div>
+        <div class="form-group">
+            <label>เบอร์โทรศัพท์</label>
+            <input type="text" name="phone" required>
+        </div>
+        <div class="form-group">
+            <label>ฉันต้องการสมัครเป็น</label>
+            <select name="role" id="role_select" onchange="toggleNurseFields()">
+                <option value="client">ผู้รับบริการ (Client)</option>
+                <option value="nurse">พยาบาล/ผู้ดูแล (Nurse)</option>
+            </select>
+        </div>
+        
+        <div id="nurse_fields" style="display:none; padding:15px; border:2px dashed var(--primary); border-radius:12px; margin-bottom:20px;">
+            <div class="form-group">
+                <label>เลขที่ใบประกอบวิชาชีพ</label>
+                <input type="text" name="license_number">
+            </div>
+            <div class="form-group">
+                <label>ความเชี่ยวชาญ</label>
+                <select name="specialization">
+                    <option value="พยาบาลวิชาชีพ RN">พยาบาลวิชาชีพ RN</option>
+                    <option value="ผู้ช่วยพยาบาล PN">ผู้ช่วยพยาบาล PN</option>
+                    <option value="นักกายภาพ PT">นักกายภาพ PT</option>
+                    <option value="ผู้ดูแล Caregiver">ผู้ดูแล Caregiver</option>
+                </select>
+            </div>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width:100%">สร้างบัญชีผู้ใช้</button>
+    </form>
+</div>
+
+<script>
+function toggleNurseFields() {
+    var role = document.getElementById('role_select').value;
+    document.getElementById('nurse_fields').style.display = (role === 'nurse') ? 'block' : 'none';
+}
+</script>
+{% endblock %}

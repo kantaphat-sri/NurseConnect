@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% block content %}
+<div class="card" style="max-width: 450px; margin: 40px auto;">
+    <h2 style="margin-top:0">เข้าสู่ระบบ</h2>
+    <form method="POST">
+        <div class="form-group">
+            <label>อีเมล (Email)</label>
+            <input type="email" name="email" required>
+        </div>
+        <div class="form-group">
+            <label>รหัสผ่าน (Password)</label>
+            <input type="password" name="password" required>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%">เข้าสู่ระบบ</button>
+    </form>
+    <p style="text-align:center; font-size:14px; margin-top:20px;">
+        ยังไม่มีบัญชี? <a href="/register" style="color: var(--primary); font-weight:700">ลงทะเบียนทีมงานที่นี่</a>
+    </p>
+</div>
+{% endblock %}

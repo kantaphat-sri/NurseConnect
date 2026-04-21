@@ -1,0 +1,102 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="margin-bottom:30px">สวัสดีคุณ {{ session.name }}</h2>
+
+<div class="grid-flex" style="display:grid; grid-template-columns: 1fr 2fr; gap:30px;">
+    <div class="card">
+        <h3>จองพยาบาลใหม่</h3>
+        <form action="/client/book" method="POST">
+            <div class="form-group">
+                <label>เลือกบริการ</label>
+                <select name="service_type" required>
+                    <option value="พาผู้ป่วยไปพบแพทย์">พาผู้ป่วยไปพบแพทย์</option>
+                    <option value="พยาบาลที่บ้าน">พยาบาลที่บ้าน</option>
+                    <option value="ดูแลผู้สูงอายุ">ดูแลผู้สูงอายุ</option>
+                    <option value="หัตถการที่บ้าน">หัตถการที่บ้าน</option>
+                    <option value="ฟื้นฟูสมรรถภาพ">ฟื้นฟูสมรรถภาพ</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label>ระยะเวลา (ชั่วโมง)</label>
+                <input type="number" name="duration" min="1" max="24" value="1" required>
+            </div>
+            <div class="form-group" style="display: flex; gap: 10px;">
+                <div style="flex: 1;">
+                    <label>วันที่</label>
+                    <input type="date" name="date" required style="width: 100%;">
+                </div>
+                <div style="flex: 1;">
+                    <label>เวลา</label>
+                    <input type="time" name="time" required style="width: 100%;">
+                </div>
+            </div>
+            <div class="form-group">
+                <label>ที่อยู่</label>
+                <textarea name="address" required></textarea>
+            </div>
+            <div class="form-group">
+                <label>หมายเหตุเพิ่มเติม</label>
+                <textarea name="notes"></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary" style="width:100%">ยืนยันการจอง</button>
+        </form>
+    </div>
+    
+    <div class="card" style="margin-top: 20px;">
+        <h3 style="margin-top:0">คำอธิบายบริการ</h3>
+        <ul style="list-style: none; padding: 0; font-size: 14px; color: #64748B;">
+            <li style="margin-bottom: 10px;">
+                <strong style="color: var(--dark);">🚗 พาผู้ป่วยไปพบแพทย์:</strong> 
+                บริการพาผู้ป่วยไปโรงพยาบาล ดูแลระหว่างรอตรวจ และพากลับบ้าน (อัตราค่าบริการ: 250 บาท/ชม.)
+            </li>
+            <li style="margin-bottom: 10px;">
+                <strong style="color: var(--dark);">🏠 พยาบาลที่บ้าน:</strong> 
+                บริการพยาบาลวิชาชีพดูแลถึงบ้าน เช่น ล้างแผล ให้ยา ฉีดยา (อัตราค่าบริการ: 400 บาท/ชม.)
+            </li>
+            <li style="margin-bottom: 10px;">
+                <strong style="color: var(--dark);">👴 ดูแลผู้สูงอายุ:</strong> 
+                บริการดูแลกิจวัตรประจำวันของผู้สูงอายุ ป้อนข้าว และการสนับสนุนด้านอารมณ์ (อัตราค่าบริการ: 300 บาท/ชม.)
+            </li>
+            <li style="margin-bottom: 10px;">
+                <strong style="color: var(--dark);">💉 หัตถการที่บ้าน:</strong> 
+                บริการช่วยเหลือด้านหัตถการเบื้องต้น เช่น การเช็ดตัวลดไข้ การจัดการสายสวน (อัตราค่าบริการ: 500 บาท/ชม.)
+            </li>
+            <li style="margin-bottom: 10px;">
+                <strong style="color: var(--dark);">🦽 ฟื้นฟูสมรรถภาพ:</strong> 
+                บริการนักกายภาพบำบัดช่วยฟื้นฟูร่างกาย เพื่อการเคลื่อนไหวที่ดีขึ้น (อัตราค่าบริการ: 450 บาท/ชม.)
+            </li>
+        </ul>
+    </div>
+</div>
+    
+    <div style="margin-top: 40px;">
+        <h3 style="margin-top:0">การจองของฉัน</h3>
+        <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+            {% for b in bookings %}
+            <div class="card" style="margin: 0;">
+                <div style="display:flex; justify-content: space-between; align-items: center; margin-bottom:15px;">
+                    <span class="badge bg-{{ b.status }}">
+                        {% if b.status == 'confirmed' %}ยืนยันแล้ว{% elif b.status == 'completed' %}เสร็จสิ้น{% else %}รอดำเนินการ{% endif %}
+                    </span>
+                    <span style="font-weight:700; font-size:14px">{{ b.date }} เวลา {{ b.time }} น.</span>
+                </div>
+                <h4 style="margin:0 0 10px 0; color: var(--dark);">{{ b.service_type }}</h4>
+                <div style="background:var(--light); padding:10px; border-radius:8px; margin-bottom:15px;">
+                    <p style="font-size:14px; margin:0 0 5px 0;"><strong>พยาบาล:</strong> {{ b.nurse_name if b.nurse_id else 'รอการตอบรับ' }}</p>
+                    <p style="font-size:14px; margin:0 0 5px 0;"><strong>ระยะเวลา:</strong> {{ b.duration }} ชั่วโมง</p>
+                    <p style="font-size:14px; color:var(--primary); font-weight:700; margin:0;"><strong>ราคารวม:</strong> ฿{{ b.total_price|toLocaleString }}</p>
+                </div>
+                
+                {% if b.status == 'pending' %}
+                <form action="/client/cancel/{{ b.id }}" method="POST">
+                    <button type="submit" class="btn btn-danger btn-sm" style="width:100%">ยกเลิกการจอง</button>
+                </form>
+                {% endif %}
+            </div>
+            {% else %}
+            <p style="color:#64748B; font-style:italic; grid-column: 1 / -1;">ยังไม่มีประวัติการจองบริการ</p>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}
